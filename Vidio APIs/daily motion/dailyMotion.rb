@@ -109,14 +109,14 @@ timeframe.each do |time_key, time_period|
 					vidio_id = a['id']
 					viewCount = a['views_total']
 
-					if viewCount > 10000 && time_key == "last_month"
+					if viewCount > 100000 && time_key == "last_month"
 						vidio_ids.push(vidio_id)
 						p a, "---"
 						#p a['ratings_total'], a['rating']
-						elsif viewCount > 1000 && time_key == "last_week"
+						elsif viewCount > 10000 && time_key == "last_week"
 							vidio_ids.push(vidio_id)
 							p a, "---"
-						elsif viewCount > 100 && time_key == "today"
+						elsif viewCount > 1000 && time_key == "today"
 							vidio_ids.push(vidio_id)
 							p a, "---"
 					end

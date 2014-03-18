@@ -1,4 +1,16 @@
-result = VimeoVideos.get('http%3A%2F%2Fvimeo.com%2Fapi%2Frest%2Fv2&format%3Djson%26method%3Dvimeo.categories.getAll%26oauth_consumer_key%3Dc1f5add1d34817a6775d10b3f6821268%26oauth_nonce%3D832d903c410b12ff0c3934a3941ed9b6%26oauth_signature_method%3DHMAC-SHA1%26oauth_timestamp%3D1391475262%26oauth_version%3D1.0%26page%3D1%26per_page%3D50')
+require 'HTTParty'
+require 'securerandom'
+require 'uri'
+require 'time'
+require 'active_support/all'
+
+
+class VimeoVideos
+	include HTTParty
+	base_uri 'vimeo.com'
+end
+
+#result = VimeoVideos.get('http%3A%2F%2Fvimeo.com%2Fapi%2Frest%2Fv2&format%3Djson%26method%3Dvimeo.categories.getAll%26oauth_consumer_key%3Dc1f5add1d34817a6775d10b3f6821268%26oauth_nonce%3D832d903c410b12ff0c3934a3941ed9b6%26oauth_signature_method%3DHMAC-SHA1%26oauth_timestamp%3D1391475262%26oauth_version%3D1.0%26page%3D1%26per_page%3D50')
 #puts result
 
 #base = Vimeo::Advanced::Base.new("bebedacec262f1c8490fe8efbee259a9547898eb", "11ae1c7df03482894ac3d665140d270d75c2f766")
@@ -55,10 +67,14 @@ consumer = OAuth::Consumer.new( CONSUMER_KEY,SECRET, {:site => "http://vimeo.com
 
 access_token = OAuth::AccessToken.new( consumer, TOKEN,TOKEN_SECRET)
 	result = access_token.get("/api/rest/v2?format=json&method=vimeo.categories.getAll&page=1&per_page=50")
+
 	response = JSON.parse(result.body)
+
+	p response
 	#puts response.keys#['videos']['video'].each do |a|
 		#puts a['id'], a['title']
 	#end
+#=begin
 	count = 0
 	response['categories']['category'].each do |a|
 		#p a
@@ -98,6 +114,5 @@ access_token = OAuth::AccessToken.new( consumer, TOKEN,TOKEN_SECRET)
 				end
 			end
 		end
-
-		
 	end
+#=end
