@@ -1,0 +1,48 @@
+require 'HTTParty'
+require 'json'
+
+class DailyMotion
+  include HTTParty
+  base_uri 'https://api.dailymotion.com'
+end
+
+# to try test different queries, visit http://www.dailymotion.com/doc/api/explorer#/video
+result = DailyMotion.get('/videos?language=en&sort=visited-day&limit=100')
+result["list"].each do |a|
+	id = a["id"]
+	#title = a["title"]
+	#tags = ''
+	details = DailyMotion.get('/video/' + id + '/?fields=description,duration,url,title,comments_total%2Ctags%2Cthumbnail_720_url%2Cviews_total')
+	puts details, "\n"
+=begin	
+	view_count = details["views_total"].to_s
+	duration = details["duration"].to_s
+	url = details["url"]
+	thumb = details["thumbnail_720_url"]
+	if details["description"].length
+		description = details["description"]
+		description = description.gsub( /<br \/>/, ' ' )
+	end
+	if details["tags"].length
+		tags = details["tags"]
+	end
+
+=begin
+	if details["tags"].length
+		details["tags"].each do |b|
+			if b.length
+				tags = tags + b + ", "
+			end
+		end
+	end
+
+	puts "id: " + id, 
+		 "title: " + title, 
+		 "url: " + url,
+		 "description: " + description, 
+		 "views: " + view_count, 
+		 "duration: " + duration, 
+		 "tags: " + tags.to_s,
+		 "thumbnail: " + thumb, "\n"
+=end
+end
