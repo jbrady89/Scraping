@@ -3,6 +3,7 @@ require 'securerandom'
 require 'uri'
 require 'time'
 require 'active_support/all'
+require 'oauth'
 
 
 class VimeoVideos
@@ -10,52 +11,6 @@ class VimeoVideos
 	base_uri 'vimeo.com'
 end
 
-#result = VimeoVideos.get('http%3A%2F%2Fvimeo.com%2Fapi%2Frest%2Fv2&format%3Djson%26method%3Dvimeo.categories.getAll%26oauth_consumer_key%3Dc1f5add1d34817a6775d10b3f6821268%26oauth_nonce%3D832d903c410b12ff0c3934a3941ed9b6%26oauth_signature_method%3DHMAC-SHA1%26oauth_timestamp%3D1391475262%26oauth_version%3D1.0%26page%3D1%26per_page%3D50')
-#puts result
-
-#base = Vimeo::Advanced::Base.new("bebedacec262f1c8490fe8efbee259a9547898eb", "11ae1c7df03482894ac3d665140d270d75c2f766")
-#puts base =
-#result = VimeoVideos.get("rest/v2&amp;format=json&amp;method=vimeo.channels.getAll")
-#puts result
-#video = Vimeo::Advanced::Channel.new("bebedacec262f1c8490fe8efbee259a9547898eb", "11ae1c7df03482894ac3d665140d270d75c2f766", 
-									#:token => "4c9903b8ecf4589d5cd0cdfb01129b02", :secret => "870fec4bc472c222ffddb8b8fe40ae85cc23fb59")
-  def header(params)
-    header = "OAuth "
-    params.each do |k, v|
-      header += "#{k}=\"#{v}\", "
-    end
-    header.slice(0..-3)
-  end
-
-=begin
-require 'base64'
-require 'cgi'
-require 'hmac-sha1'
-
-key = '1234'
-signature = 'abcdef'
-hmac = HMAC::SHA1.new(key)
-hmac.update(signature)
-sig = CGI.escape(Base64.encode64("#{hmac.digest}\n"))
-nonce = SecureRandom.hex()
-url = "/api/rest/v2?format=json&method=vimeo.channels.getAll"
-params = {
-	  'OAuth realm' => "",
-      'oauth_consumer_key' => 'bebedacec262f1c8490fe8efbee259a9547898eb',
-      'oauth_version' => '1.0',
-      'oauth_signature_method' => 'HMAC-SHA1',
-      'oauth_timestamp' => Time.now.to_i.to_s,
-      'oauth_nonce' => nonce,
-      'oauth_token' => "4c9903b8ecf4589d5cd0cdfb01129b02",
-      'oauth_signature' => sig
-    }
-header = header(params)
-puts header
-data = VimeoVideos.get(url, { 'Authorization' => header })
-puts data
-=end
-
-require 'oauth'
 
 CONSUMER_KEY = "bebedacec262f1c8490fe8efbee259a9547898eb"
 SECRET = "11ae1c7df03482894ac3d665140d270d75c2f766"
