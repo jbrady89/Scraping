@@ -46,7 +46,6 @@ yesterday = []
 last_week = []
 last_month = []
 timeframe = { "today" => 1.day.ago, "last_week" => 1.week.ago, "last_month" => 1.month.ago }
-	#timeframe.each do |time_key, time_period|
 categories.each do |cat_key, value|
 	begin
 		#category_name = category.gsub(/\s+/, "")
