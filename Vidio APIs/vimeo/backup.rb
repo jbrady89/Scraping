@@ -18,26 +18,26 @@ TOKEN = "4c9903b8ecf4589d5cd0cdfb01129b02"
 TOKEN_SECRET = "870fec4bc472c222ffddb8b8fe40ae85cc23fb59"
 
 categories = 	{
-								'Activism & Non Profits' => 'activism',
-								'Animation & Motion Graphics' => 'animation', 
-								'Art' => 'art',
-								'Branded' => 'branded', 
-								'Comedy' => 'comedy',
-								'Education & DIY' => 'education', 
-								'Everyday Life' => 'everyday',
-								'Experimental' => 'experimental',
-								'Fashion' => 'fashion',
-								'Films' => 'films',
-								'HD' => 'hd',
-								'Music' => 'music',
-								'Nature' => 'nature',
-								'Products & Equipment' => 'productsandequipment',
-								'Science & Tech' => 'technology',
-								'Sports' => 'sports',
-								'Travel & Events' => 'travel',
-								'Vimeo Projects' => 'vimeoprojects',
-								'Web Series' => 'webseries'
-							}
+					'Activism & Non Profits' => 'activism',
+					'Animation & Motion Graphics' => 'animation', 
+					'Art' => 'art',
+					'Branded' => 'branded', 
+					'Comedy' => 'comedy',
+					'Education & DIY' => 'education', 
+					'Everyday Life' => 'everyday',
+					'Experimental' => 'experimental',
+					'Fashion' => 'fashion',
+					'Films' => 'films',
+					'HD' => 'hd',
+					'Music' => 'music',
+					'Nature' => 'nature',
+					'Products & Equipment' => 'productsandequipment',
+					'Science & Tech' => 'technology',
+					'Sports' => 'sports',
+					'Travel & Events' => 'travel',
+					'Vimeo Projects' => 'vimeoprojects',
+					'Web Series' => 'webseries'
+				}
 
 consumer = OAuth::Consumer.new( CONSUMER_KEY,SECRET, {:site => "http://vimeo.com", :signature_method => "HMAC-SHA1", :scheme => :header })
 access_token = OAuth::AccessToken.new( consumer, TOKEN,TOKEN_SECRET)
