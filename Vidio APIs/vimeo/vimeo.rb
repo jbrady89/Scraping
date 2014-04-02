@@ -41,22 +41,27 @@ categories = 	{
 
 consumer = OAuth::Consumer.new( CONSUMER_KEY,SECRET, {:site => "http://vimeo.com", :signature_method => "HMAC-SHA1", :scheme => :header })
 access_token = OAuth::AccessToken.new( consumer, TOKEN,TOKEN_SECRET)
+p access_token
 vidios = []
 yesterday = []
 last_week = []
 last_month = []
 timeframe = { "today" => 1.day.ago, "last_week" => 1.week.ago, "last_month" => 1.month.ago }
+count = 0
 categories.each do |cat_key, value|
 	begin
 		#category_name = category.gsub(/\s+/, "")
 		#category_name = category_name.gsub("&", "%2526").gsub("%20", "%2520")
 		p value
-		for i in 1..100
+
+		for i in 1..500
 			result = access_token.get("/api/rest/v2?format=json&method=vimeo.categories.getRelatedVideos&category=" + value + "&page=" + i.to_s + "&per_page=100")
 			response = JSON.parse(result.body)
 			response['videos']['video'].each do |a|
 				id = a['id']
 				upload_date = a['upload_date']
+				count += 1
+				#p count
 				if upload_date > 1.day.ago.to_s
 						response = access_token.get('/api/rest/v2?format=json&method=vimeo.videos.getInfo&video_id=' + id)
 						vid_info = JSON.parse(response.body)

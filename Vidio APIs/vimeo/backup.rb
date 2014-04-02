@@ -51,44 +51,54 @@ categories.each do |cat_key, value|
 		#category_name = category.gsub(/\s+/, "")
 		#category_name = category_name.gsub("&", "%2526").gsub("%20", "%2520")
 		p value
+		#count = 0
 		for i in 1..100
+			p i
 			result = access_token.get("/api/rest/v2?format=json&method=vimeo.categories.getRelatedVideos&category=" + value + "&page=" + i.to_s + "&per_page=100")
 			response = JSON.parse(result.body)
 			response['videos']['video'].each do |a|
+				#count += 1
+				#p count
 				id = a['id']
 				upload_date = a['upload_date']
-				if upload_date > 1.day.ago.to_s
+				if upload_date > 24.hours.ago.to_s
 						response = access_token.get('/api/rest/v2?format=json&method=vimeo.videos.getInfo&video_id=' + id)
 						vid_info = JSON.parse(response.body)
-						p vid_info['video']
+						#p vid_info['video']
 						views = vid_info['video'][0]['number_of_plays']
+						p "yesterday", views
 						if views.to_i > 100
-							p views
+							#p views
 							vidios.push(id)
 							yesterday.push(id)
-							p views
+							p "true"
 							p "total: " + vidios.uniq.length.to_s, "yesterday: " + yesterday.uniq.length.to_s, "last week: " + last_week.uniq.length.to_s, "last month: " + last_month.uniq.length.to_s
 						end
-					elsif upload_date > 1.week.ago.to_s
+				end
+				if upload_date > 1.week.ago.to_s
 						response = access_token.get('/api/rest/v2?format=json&method=vimeo.videos.getInfo&video_id=' + id)
 						vid_info = JSON.parse(response.body)
-						p vid_info['video']
+						#p vid_info['video']
 						views = vid_info['video'][0]['number_of_plays']
+						p "last_week", views
 						if views.to_i > 1000
 							vidios.push(id)
 							last_week.push(id)
-							p views
+							#p "last week", views
+							p "true"
 							p "total: " + vidios.uniq.length.to_s, "yesterday: " + yesterday.uniq.length.to_s, "last week: " + last_week.uniq.length.to_s, "last month: " + last_month.uniq.length.to_s
 						end
-					elsif upload_date > 1.month.ago.to_s
+				end
+				if upload_date > 1.month.ago.to_s
 						response = access_token.get('/api/rest/v2?format=json&method=vimeo.videos.getInfo&video_id=' + id)
 						vid_info = JSON.parse(response.body)
-						p vid_info['video']
+						#p vid_info['video']
 						views = vid_info['video'][0]['number_of_plays']
+						p "last_month", views
 						if views.to_i > 10000
 							vidios.push(id)
 							last_month.push(id)
-							p views
+							p "last month", views
 							p "total: " + vidios.uniq.length.to_s, "yesterday: " + yesterday.uniq.length.to_s, "last week: " + last_week.uniq.length.to_s, "last month: " + last_month.uniq.length.to_s
 						end
 				end
