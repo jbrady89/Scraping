@@ -8,29 +8,14 @@ require 'oauth2'
 
 class Vimeo
 	include HTTParty
-	base_uri 'http://api.vimeo.com'
+	base_uri 'https://api.vimeo.com'
 end
 
 
-CONSUMER_KEY = "bebedacec262f1c8490fe8efbee259a9547898eb"
-SECRET = "11ae1c7df03482894ac3d665140d270d75c2f766"
-TOKEN = "4c9903b8ecf4589d5cd0cdfb01129b02"
-TOKEN_SECRET = "870fec4bc472c222ffddb8b8fe40ae85cc23fb59"
+CLIENT_ID = "8259c0b83a073875ca9b180dad67a89b7d100393"
+CLIENT_SECRET = "8259e78b8ff789dcc13543417059c60d0284aceb"
+TOKEN = "5958de4639ca527ff7edd1082bb352c7"
 
-#trying to use beta..doesn't work
-
-client = OAuth2::Client.new(
-	CONSUMER_KEY, 
-	SECRET, 
-	{:site => 'http://vimeo.com', :signature_method => "HMAC-SHA1", :accept => "application/vnd.vimeo.*+json;version=3.0", :scheme => :header}
-)
-
-access_token = OAuth2::AccessToken.new(client, TOKEN)
-#p access_token
-#parsed = OAuth2::Response.methods
-#p parsed
-video = access_token.get('/categories/music/videos?sort=date')
-p video.body
 #p JSON.parse(video.body)
 #p client
 #auth_url = client.auth_code.authorize_url(:redirect_uri => 'http://api.vimeo.com/oauth2/callback')
@@ -44,3 +29,22 @@ p video.body
 #p result
 #response = JSON.parse(result.body)
 #p response
+
+require "oauth2"
+
+site_path = 'https://api.vimeo.com'
+redirect_uri = 'http://szl.it'
+client = OAuth2::Client.new(CLIENT_ID, CLIENT_SECRET, {:site => site_path, :signature_method => "HMAC-SHA1", :scheme => :header })
+p client
+token = OAuth2::AccessToken.new(client, TOKEN)
+videos = token.get('/categories/music/videos?sort=date')
+hash = JSON.parse(videos.body)
+p hash["data"].keys
+#code = client.auth_code.authorize_url(:redirect_uri => "http://localhost:3000")
+#p code
+#token = client.auth_code.get_token(code, :redirect_uri => "http://localhost:3000")
+
+#response = token.get('https://api.vimeo.com/categories/music/videos?sort=date')
+
+#puts response.body
+
