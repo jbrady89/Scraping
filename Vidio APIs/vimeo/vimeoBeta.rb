@@ -22,17 +22,16 @@ TOKEN_SECRET = "870fec4bc472c222ffddb8b8fe40ae85cc23fb59"
 client = OAuth2::Client.new(
 	CONSUMER_KEY, 
 	SECRET, 
-	{:site => 'http://vimeo.com',
-	:signature_method => "HMAC-SHA1", 
-	:accept => "application/vnd.vimeo.*+json;version=3.0",
-	:scheme => :header}
+	{:site => 'http://vimeo.com', :signature_method => "HMAC-SHA1", :accept => "application/vnd.vimeo.*+json;version=3.0", :scheme => :header}
 )
 
 access_token = OAuth2::AccessToken.new(client, TOKEN)
-p access_token
-video = access_token.get('/channels/staffpicks/videos?filter=content_rating&filter_content_rating=safe,unrated')
-p video
+#p access_token
+#parsed = OAuth2::Response.methods
+#p parsed
+video = access_token.get('/categories/music/videos?sort=date')
 p video.body
+#p JSON.parse(video.body)
 #p client
 #auth_url = client.auth_code.authorize_url(:redirect_uri => 'http://api.vimeo.com/oauth2/callback')
 # => "https://example.org/oauth/authorization?response_type=code&client_id=client_id&redirect_uri=http://localhost:8080/oauth2/callback"
