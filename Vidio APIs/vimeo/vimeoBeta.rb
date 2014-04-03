@@ -37,9 +37,11 @@ redirect_uri = 'http://szl.it'
 client = OAuth2::Client.new(CLIENT_ID, CLIENT_SECRET, {:site => site_path, :signature_method => "HMAC-SHA1", :scheme => :header })
 p client
 token = OAuth2::AccessToken.new(client, TOKEN)
-videos = token.get('/categories/music/videos?sort=date')
+videos = token.get('/categories/music/videos?sort=plays')
 hash = JSON.parse(videos.body)
-p hash["data"].keys
+hash["data"].each do |a|
+	p a['stats']
+end
 #code = client.auth_code.authorize_url(:redirect_uri => "http://localhost:3000")
 #p code
 #token = client.auth_code.get_token(code, :redirect_uri => "http://localhost:3000")
