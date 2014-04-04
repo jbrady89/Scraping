@@ -13,7 +13,6 @@ categories = 	{
 					'Activism & Non Profits' => 'activism',
 					'Animation & Motion Graphics' => 'animation', 
 					'Art' => 'art',
-					'Branded' => 'branded', 
 					'Comedy' => 'comedy',
 					'Education & DIY' => 'education', 
 					'Everyday Life' => 'everyday',
@@ -40,29 +39,36 @@ client = OAuth2::Client.new(CLIENT_ID, CLIENT_SECRET, {:site => site_path, :sign
 token = OAuth2::AccessToken.new(client, TOKEN)
 
 categories.each do |category_name, cat_uri|
-	for i in 1..100
-		page_number = i.to_s
-		videos = token.get('/categories/' + cat_uri + '/videos?sort=plays&page=' + page_number + '&per_page=100')
-		hash = JSON.parse(videos.body)
-		hash["data"].each do |a|
-			if a['created_time'] > 1.month.ago.to_s && a['stats']['plays'].to_i > 10000
-				p a['stats'], a['created_time'], "last_month"
-				last_month.push(a['created_time'])
-				count += 1
-				elsif a['created_time'] > 1.week.ago.to_s && a['stats']['plays'].to_i > 1000
-					p a['stats'], a['created_time'], "last_week"
-					last_week.push(a['created_time'])
+	begin
+		p category_name
+		for i in 1..150
+			page_number = i.to_s
+			videos = token.get('/categories/' + cat_uri + '/videos?sort=plays&page=' + page_number + '&per_page=100')
+			hash = JSON.parse(videos.body)
+			hash["data"].each do |a|
+				if a['created_time'] > 1.month.ago.to_s && a['stats']['plays'].to_i > 10000
+					p a['stats'], a['created_time'], "last_month"
+					last_month.push(a['created_time'])
 					count += 1
-				elsif a['created_time'] > 1.day.ago.to_s && a['stats']['plays'].to_i > 100
-					p a['stats'], a['created_time'], "yesterday"
-					yesterday.push(a['created_time'])
-					count += 1
+					elsif a['created_time'] > 1.week.ago.to_s && a['stats']['plays'].to_i > 1000
+						p a['stats'], a['created_time'], "last_week"
+						last_week.push(a['created_time'])
+						count += 1
+					elsif a['created_time'] > 1.day.ago.to_s && a['stats']['plays'].to_i > 100
+						p a['stats'], a['created_time'], "yesterday"
+						yesterday.push(a['created_time'])
+						count += 1
+				end
 			end
+			p i
 		end
+	rescue
+		next
 	end
 end
-p "Month: " + last_month.uniq.length, "Week: " + last_week.uniq.length, "yesterday: " + yesterday.uniq.length
-p count += 1
+p "Month: " + last_month.uniq.length.to_s, "Week: " + last_week.uniq.length.to_s, "yesterday: " + yesterday.uniq.length.to_s
+p count
+#11:02
 #code = client.auth_code.authorize_url(:redirect_uri => "http://localhost:3000")
 #p code
 #token = client.auth_code.get_token(code, :redirect_uri => "http://localhost:3000")
