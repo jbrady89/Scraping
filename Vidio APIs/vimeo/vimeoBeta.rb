@@ -68,12 +68,4 @@ categories.each do |category_name, cat_uri|
 end
 p "Month: " + last_month.uniq.length.to_s, "Week: " + last_week.uniq.length.to_s, "yesterday: " + yesterday.uniq.length.to_s
 p count
-#11:02
-#code = client.auth_code.authorize_url(:redirect_uri => "http://localhost:3000")
-#p code
-#token = client.auth_code.get_token(code, :redirect_uri => "http://localhost:3000")
-
-#response = token.get('https://api.vimeo.com/categories/music/videos?sort=date')
-
-#puts response.body
 
