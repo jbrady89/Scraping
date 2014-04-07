@@ -2,10 +2,6 @@ require 'open-uri'
 require 'nokogiri'
 require 'HTTParty'
 
-class Reddit
-	include HTTParty
-	base_uri 'http://reddit.tv/'
-end
 channels = [
 			"videos", 
 			"music", 
@@ -28,24 +24,38 @@ channels = [
 			"learnuselesstalents", 
 			"deepintoyoutube"
 		]
-count = 0
-channels.each do |channel_link|
-	channel_uri = "#/r/" + channel_link
-	output = `phantomjs hello.js #{channel_uri} &`
-	output.gsub!(/\n/, '')
-	links = output.split(',')
-	links.each do |page_link|
-		#html = Nokogiri::HTML( open(page_link) )
-		#video = html.xpath('//div[@id="video-embed"]/iframe[@id="ytplayer"]')
-		#p video
-		p page_link
-		embedLink = `phantomjs player.js #{page_link} &`
-		p "link: " + embedLink.gsub!(/\n/, '')
-		p "id: " + embedLink[30..40]
-		count += 1
-		p count
+
+
+class Reddit
+
+	def getLinks channels
+		video_id = []
+		channels.each do |channel_link|
+			channel_uri = "#/r/" + channel_link
+			output = `phantomjs hello.js #{channel_uri} &`
+			output.gsub!(/\n/, '')
+			links = output.split(',')
+			p links
+			links.each do |page_link|
+				video_id.push(page_link)
+				#p page_link
+=begin
+				embedLink = `phantomjs player.js #{page_link} &`
+				#p embedLink 
+				unless embedLink[0..3] == "null"
+					id = embedLink[30..40]
+					p "link: " + embedLink.gsub!(/\n/, '')
+					p "id: " + id
+					count += 1
+					p count
+					video_id.push(id)
+				end
+=end
+			end
+		end
+		p "Total: " + video_id.uniq.length.to_s 
 	end
-	#output.each do |a|
-	#	p a
-	#end
 end
+
+reddit = Reddit.new
+reddit.getLinks(channels)
