@@ -1,42 +1,45 @@
+require 'httparty'
+require 'securerandom'
+require 'uri'
+
+class Youtube
+	include HTTParty
+	base_uri 'https://www.googleapis.com/youtube/v3'
+end
+
 class Reddit
-	Channels = [
-					"videos", 
-					"music", 
-					"vicevideo", 
-					"television", 
-					"games", 
-					"sports", 
-					"documentaries", 
-					"fullmoviesonyoutube", 
-					"redditpicks", 
-					"thenewyorktimes", 
-					"fringediscussion", 
-					"kidsafevideos", 
-					"listentothis", 
-					"hiphopheads", 
-					"classicalmusic", 
-					"jazz", 
-					"sciencevideos", 
-					"todayilearned", 
-					"learnuselesstalents", 
-					"deepintoyoutube"
+
+
+	Reddit_channels = [
+					"videos"
 				]
 
-	def get_links
+	def self.get_reddit_links
 		video_id = []
-		Channels.each do |channel_link|
+		Reddit_channels.each do |channel_link|
 			channel_uri = "#/r/" + channel_link
 			output = `phantomjs rtv.js #{channel_uri} &`
 			output.gsub!(/\n/, '')
 			links = output.split(',')
-			p links
+			#p links
 			links.each do |page_link|
-				video_id.push(page_link)
+				#id = page_link
+				video_id.push page_link
+				#result = self.get('/videos?part=snippet&id=' + id + '&key=AIzaSyBi5KmDUjrcysyFgQgTddYMx0bJgGPxjFQ')
+				#p result
 			end
 		end
-		p "Total: " + video_id.uniq.length.to_s 
+		video_id
+		#p "Total: " + video_id.uniq.length.to_s 
 	end
 end
 
-reddit = Reddit.new
-reddit.get_links
+output = Reddit.get_reddit_links
+output.each do |id|
+	#begin
+		result = Youtube.get('/videos?part=snippet&id=' + id + '&key=AIzaSyBi5KmDUjrcysyFgQgTddYMx0bJgGPxjFQ')
+		p result
+	#rescue
+	#	next
+	#end
+end
