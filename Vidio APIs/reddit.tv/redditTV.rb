@@ -11,7 +11,26 @@ class Reddit
 
 
 	Reddit_channels = [
-					"videos"
+					"videos", 
+					"music", 
+					"vicevideo", 
+					"television", 
+					"games", 
+					"sports", 
+					"documentaries", 
+					"fullmoviesonyoutube", 
+					"redditpicks", 
+					"thenewyorktimes", 
+					"fringediscussion", 
+					"kidsafevideos", 
+					"listentothis", 
+					"hiphopheads", 
+					"classicalmusic", 
+					"jazz", 
+					"sciencevideos", 
+					"todayilearned", 
+					"learnuselesstalents", 
+					"deepintoyoutube"
 				]
 
 	def self.get_reddit_links
@@ -37,9 +56,15 @@ end
 output = Reddit.get_reddit_links
 output.each do |id|
 	#begin
-		result = Youtube.get('/videos?part=snippet&id=' + id + '&key=AIzaSyBi5KmDUjrcysyFgQgTddYMx0bJgGPxjFQ')
-		p result
+		#TODO add requests for statistics, content_details 
+	response = Youtube.get('/videos?part=snippet&id=' + id + '&key=AIzaSyBi5KmDUjrcysyFgQgTddYMx0bJgGPxjFQ')
+	response = JSON.parse(response.body)
+	hash = response['items'][0]
+	unless hash == nil
+		p hash['snippet']
+	end
 	#rescue
 	#	next
 	#end
 end
+
