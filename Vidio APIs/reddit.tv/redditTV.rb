@@ -39,5 +39,4 @@ class Reddit
 end
 
 reddit = Reddit.new
-#p reddit.class_variables
 reddit.get_links
