@@ -1,6 +1,4 @@
 require 'httparty'
-require 'securerandom'
-require 'uri'
 
 class Youtube
 	include HTTParty
@@ -8,8 +6,6 @@ class Youtube
 end
 
 class Reddit
-
-
 	Reddit_channels = [
 					"videos", 
 					"music", 
@@ -40,12 +36,8 @@ class Reddit
 			output = `phantomjs rtv.js #{channel_uri} &`
 			output.gsub!(/\n/, '')
 			links = output.split(',')
-			#p links
 			links.each do |page_link|
-				#id = page_link
 				video_id.push page_link
-				#result = self.get('/videos?part=snippet&id=' + id + '&key=AIzaSyBi5KmDUjrcysyFgQgTddYMx0bJgGPxjFQ')
-				#p result
 			end
 		end
 		video_id
@@ -55,16 +47,13 @@ end
 
 output = Reddit.get_reddit_links
 output.each do |id|
-	#begin
-		#TODO add requests for statistics, content_details 
+
+	#TODO add requests for statistics, content_details  (see backup.rb)
 	response = Youtube.get('/videos?part=snippet&id=' + id + '&key=AIzaSyBi5KmDUjrcysyFgQgTddYMx0bJgGPxjFQ')
 	response = JSON.parse(response.body)
 	hash = response['items'][0]
 	unless hash == nil
 		p hash['snippet']
 	end
-	#rescue
-	#	next
-	#end
 end
 
