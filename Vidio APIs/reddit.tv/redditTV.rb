@@ -53,7 +53,24 @@ output.each do |id|
 	response = JSON.parse(response.body)
 	hash = response['items'][0]
 	unless hash == nil
-		p hash['snippet']
+		p hash
+	end
+
+	response = Youtube.get('/videos?part=contentDetails&id=' + id + '&key=AIzaSyBi5KmDUjrcysyFgQgTddYMx0bJgGPxjFQ')
+	#p last_video
+	response = JSON.parse(response.body)
+	hash = response['items'][0]
+	unless hash == nil
+		p hash
+	end
+
+	response = Youtube.get('/videos?part=statistics&id=' + id + '&key=AIzaSyBi5KmDUjrcysyFgQgTddYMx0bJgGPxjFQ')
+	#p last_video["items"][0]["snippet"]
+	response = JSON.parse(response.body)
+	hash = response['items'][0]
+	unless hash == nil
+		p hash
+		#p hash['snippet']
 	end
 end
 
