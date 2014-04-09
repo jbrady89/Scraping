@@ -46,20 +46,22 @@ class Reddit
 end
 
 output = Reddit.get_reddit_links
+responses = []
 output.each do |id|
 
-	snippet = Youtube.get('/videos?part=snippet&id=' + id + '&key=AIzaSyBi5KmDUjrcysyFgQgTddYMx0bJgGPxjFQ')
+	responses.push(
+		Youtube.get('/videos?part=snippet&id=' + id + '&key=AIzaSyBi5KmDUjrcysyFgQgTddYMx0bJgGPxjFQ'), 
+		Youtube.get('/videos?part=contentDetails&id=' + id + '&key=AIzaSyBi5KmDUjrcysyFgQgTddYMx0bJgGPxjFQ'),
+		Youtube.get('/videos?part=statistics&id=' + id + '&key=AIzaSyBi5KmDUjrcysyFgQgTddYMx0bJgGPxjFQ')
+	)
 
-	content_details = Youtube.get('/videos?part=contentDetails&id=' + id + '&key=AIzaSyBi5KmDUjrcysyFgQgTddYMx0bJgGPxjFQ')
-
-	statistics = Youtube.get('/videos?part=statistics&id=' + id + '&key=AIzaSyBi5KmDUjrcysyFgQgTddYMx0bJgGPxjFQ')
-
-	[ snippet, content_details, statistics ].each do |response|
-		response = JSON.parse(response.body)
-		hash = response['items'][0]
-		unless hash == nil
-			p hash
+	responses.each do |response|
+		unless response == nil
+			response = JSON.parse(response.body)
+			hash = response['items'][0]
+			unless hash == nil
+				p hash
+			end
 		end
 	end
 end
-
