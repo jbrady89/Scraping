@@ -48,29 +48,18 @@ end
 output = Reddit.get_reddit_links
 output.each do |id|
 
-	#TODO add requests for statistics, content_details  (see backup.rb)
-	response = Youtube.get('/videos?part=snippet&id=' + id + '&key=AIzaSyBi5KmDUjrcysyFgQgTddYMx0bJgGPxjFQ')
-	response = JSON.parse(response.body)
-	hash = response['items'][0]
-	unless hash == nil
-		p hash
-	end
+	snippet = Youtube.get('/videos?part=snippet&id=' + id + '&key=AIzaSyBi5KmDUjrcysyFgQgTddYMx0bJgGPxjFQ')
 
-	response = Youtube.get('/videos?part=contentDetails&id=' + id + '&key=AIzaSyBi5KmDUjrcysyFgQgTddYMx0bJgGPxjFQ')
-	#p last_video
-	response = JSON.parse(response.body)
-	hash = response['items'][0]
-	unless hash == nil
-		p hash
-	end
+	content_details = Youtube.get('/videos?part=contentDetails&id=' + id + '&key=AIzaSyBi5KmDUjrcysyFgQgTddYMx0bJgGPxjFQ')
 
-	response = Youtube.get('/videos?part=statistics&id=' + id + '&key=AIzaSyBi5KmDUjrcysyFgQgTddYMx0bJgGPxjFQ')
-	#p last_video["items"][0]["snippet"]
-	response = JSON.parse(response.body)
-	hash = response['items'][0]
-	unless hash == nil
-		p hash
-		#p hash['snippet']
+	statistics = Youtube.get('/videos?part=statistics&id=' + id + '&key=AIzaSyBi5KmDUjrcysyFgQgTddYMx0bJgGPxjFQ')
+
+	[ snippet, content_details, statistics ].each do |response|
+		response = JSON.parse(response.body)
+		hash = response['items'][0]
+		unless hash == nil
+			p hash
+		end
 	end
 end
 
