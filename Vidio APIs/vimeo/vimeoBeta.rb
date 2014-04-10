@@ -43,7 +43,7 @@ categories.each do |category_name, cat_uri|
 		p category_name
 		for i in 1..150
 			page_number = i.to_s
-			videos = token.get('/categories/' + cat_uri + '/videos?sort=plays&page=' + page_number + '&per_page=100')
+			videos = token.get('/categories/' + cat_uri + '/videos?sort=date&page=' + page_number + '&per_page=100')
 			hash = JSON.parse(videos.body)
 			hash["data"].each do |a|
 				if a['created_time'] > 1.month.ago.to_s && a['stats']['plays'].to_i > 10000
