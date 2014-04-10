@@ -34,6 +34,7 @@ count = 0
 last_week = []
 last_month = []
 yesterday = []
+too_old = false
 site_path = 'https://api.vimeo.com'
 client = OAuth2::Client.new(CLIENT_ID, CLIENT_SECRET, {:site => site_path, :signature_method => "HMAC-SHA1", :scheme => :header })
 token = OAuth2::AccessToken.new(client, TOKEN)
@@ -46,20 +47,25 @@ categories.each do |category_name, cat_uri|
 			videos = token.get('/categories/' + cat_uri + '/videos?sort=date&page=' + page_number + '&per_page=100')
 			hash = JSON.parse(videos.body)
 			hash["data"].each do |a|
-				if a['created_time'] > 1.month.ago.to_s && a['stats']['plays'].to_i > 10000
-					p a['stats'], a['created_time'], "last_month"
-					last_month.push(a['created_time'])
-					count += 1
-					elsif a['created_time'] > 1.week.ago.to_s && a['stats']['plays'].to_i > 1000
-						p a['stats'], a['created_time'], "last_week"
-						last_week.push(a['created_time'])
+				unless a['created_time'] < 1.months.ago.to_s
+					if a['created_time'] > 1.month.ago.to_s && a['stats']['plays'].to_i > 5000
+						p a['stats'], a['created_time'], "last_month"
+						last_month.push(a['created_time'])
 						count += 1
-					elsif a['created_time'] > 1.day.ago.to_s && a['stats']['plays'].to_i > 100
-						p a['stats'], a['created_time'], "yesterday"
-						yesterday.push(a['created_time'])
-						count += 1
+						elsif a['created_time'] > 1.week.ago.to_s && a['stats']['plays'].to_i > 1000
+							p a['stats'], a['created_time'], "last_week"
+							last_week.push(a['created_time'])
+							count += 1
+						elsif a['created_time'] > 1.day.ago.to_s && a['stats']['plays'].to_i > 100
+							p a['stats'], a['created_time'], "yesterday"
+							yesterday.push(a['created_time'])
+							count += 1
+					end
+				else
+					too_old = true
 				end
 			end
+			break if too_old == true
 			p i
 		end
 	rescue
