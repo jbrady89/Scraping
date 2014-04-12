@@ -58,13 +58,11 @@ output.each do |id|
 	responses.each do |response|
 		unless response == nil
 			response = JSON.parse(response.body)
-			p response['items']
+			p response, '---', response['items']
 			hash = response['items'][0]
 			unless hash == nil
 				#p hash
 			end
-		else
-			next
 		end
 	end
 end
