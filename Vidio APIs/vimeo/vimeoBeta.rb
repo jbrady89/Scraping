@@ -1,7 +1,4 @@
 require 'HTTParty'
-require 'securerandom'
-require 'uri'
-require 'time'
 require 'active_support/all'
 require 'oauth2'
 
@@ -42,7 +39,7 @@ token = OAuth2::AccessToken.new(client, TOKEN)
 categories.each do |category_name, cat_uri|
 	begin
 		p category_name
-		for i in 1..150
+		for i in 1..200
 			page_number = i.to_s
 			videos = token.get('/categories/' + cat_uri + '/videos?sort=date&page=' + page_number + '&per_page=100')
 			hash = JSON.parse(videos.body)
