@@ -11,11 +11,13 @@ page.open(url, function(status) {
         return [].map.call(videoContainer.querySelectorAll('a'), function(link) {
 			//console.log(return link.getAttribute('href'));
 			if (link.style['backgroundImage'].substring(11,15) == 'edge') {
-				return link.style['backgroundImage'].substring(61,73);
+				return false;//link.style['backgroundImage'].substring(61,73);
 			}	else if (link.style['backgroundImage'].substring(11,15) == 'i.vi') {
-				return link.style['backgroundImage'].substring(32, 41);
-			}	else {
-				return link.style['backgroundImage'].substring(27, 38);
+				return false;//link.style['backgroundImage'].substring(32, 41);
+			}	else if (link.style['backgroundImage'].substring(11,15) == 'i2.y') {
+				return false;//link.style['backgroundImage'].substring(27, 38);
+			} else  {
+				return link.style['backgroundImage'];
 			}
         });
     });
