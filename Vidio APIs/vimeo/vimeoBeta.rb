@@ -31,42 +31,41 @@ count = 0
 last_week = []
 last_month = []
 yesterday = []
-too_old = false
 site_path = 'https://api.vimeo.com'
 client = OAuth2::Client.new(CLIENT_ID, CLIENT_SECRET, {:site => site_path, :signature_method => "HMAC-SHA1", :scheme => :header })
 token = OAuth2::AccessToken.new(client, TOKEN)
 
 categories.each do |category_name, cat_uri|
-	begin
-		p category_name
-		for i in 1..200
-			page_number = i.to_s
-			videos = token.get('/categories/' + cat_uri + '/videos?sort=date&page=' + page_number + '&per_page=100')
-			hash = JSON.parse(videos.body)
-			hash["data"].each do |a|
-				unless a['created_time'] < 1.months.ago.to_s
-					if a['created_time'] > 1.month.ago.to_s && a['stats']['plays'].to_i > 5000
-						p a['stats'], a['created_time'], "last_month"
-						last_month.push(a['created_time'])
+	too_old = false
+	p category_name
+	for i in 1..200
+		page_number = i.to_s
+		videos = token.get('/categories/' + cat_uri + '/videos?sort=date&page=' + page_number + '&per_page=100')
+		hash = JSON.parse(videos.body)
+		hash["data"].each do |a|
+			unless a['created_time'] < 1.months.ago.to_s
+				if a['created_time'] > 1.month.ago.to_s && a['stats']['plays'].to_i > 5000
+					p a['stats'], a['created_time'], "last_month"
+					last_month.push(a['created_time'])
+					count += 1
+					elsif a['created_time'] > 1.week.ago.to_s && a['stats']['plays'].to_i > 1000
+						p a['stats'], a['created_time'], "last_week"
+						last_week.push(a['created_time'])
 						count += 1
-						elsif a['created_time'] > 1.week.ago.to_s && a['stats']['plays'].to_i > 1000
-							p a['stats'], a['created_time'], "last_week"
-							last_week.push(a['created_time'])
-							count += 1
-						elsif a['created_time'] > 1.day.ago.to_s && a['stats']['plays'].to_i > 100
-							p a['stats'], a['created_time'], "yesterday"
-							yesterday.push(a['created_time'])
-							count += 1
-					end
-				else
-					too_old = true
+					elsif a['created_time'] > 1.day.ago.to_s && a['stats']['plays'].to_i > 100
+						p a['stats'], a['created_time'], "yesterday"
+						yesterday.push(a['created_time'])
+						count += 1
 				end
+			else
+				too_old = true
 			end
-			break if too_old == true
-			p i
 		end
-	rescue
-		next
+		if too_old == true
+			p "breaks"
+			break
+		end
+		p i
 	end
 end
 p "Month: " + last_month.uniq.length.to_s, "Week: " + last_week.uniq.length.to_s, "yesterday: " + yesterday.uniq.length.to_s
