@@ -34,6 +34,8 @@ class Reddit
 		Reddit_channels.each do |channel_link|
 			channel_uri = "#/r/" + channel_link
 			output = `phantomjs rtv.js #{channel_uri} &`
+			#p output
+			#video_id.push(output)
 			output.gsub!(/\n/, '')
 			links = output.split(',')
 			links.each do |page_link|
@@ -46,12 +48,11 @@ class Reddit
 end
 
 output = Reddit.get_reddit_links
-p output.length.to_s
-p output.uniq
-responses = []
-=begin
+p output
+#p output.length.to_s
+#p output.uniq
 count = 0
-output.uniq.each do |id|
+output.each do |id|
 
 	
 	snippet =	Youtube.get('/videos?part=snippet&id=' + id + '&key=AIzaSyBi5KmDUjrcysyFgQgTddYMx0bJgGPxjFQ')
@@ -77,4 +78,3 @@ output.uniq.each do |id|
 	end
 	p count
 end
-=end

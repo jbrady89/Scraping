@@ -2,6 +2,7 @@ var system = require('system'),
 	uri = system.args[1],
 	page = require('webpage').create(),
 	urls = [],
+	non_yt = [],
 	url = "http://reddit.tv/" + uri;
 page.open(url, function(status) {
 	//console.log(page.content);
@@ -11,12 +12,13 @@ page.open(url, function(status) {
         return [].map.call(videoContainer.querySelectorAll('a'), function(link) {
 			//console.log(return link.getAttribute('href'));
 			if (link.style['backgroundImage'].substring(11,15) == 'edge') {
-				return false;//link.style['backgroundImage'].substring(61,73);
+				return link.style['backgroundImage'].substring(61,73);
 			}	else if (link.style['backgroundImage'].substring(11,15) == 'i.vi') {
-				return false;//link.style['backgroundImage'].substring(32, 41);
+				return link.style['backgroundImage'].substring(32, 41);
 			}	else if (link.style['backgroundImage'].substring(11,15) == 'i2.y') {
-				return false;//link.style['backgroundImage'].substring(27, 38);
+				return link.style['backgroundImage'].substring(27, 38);
 			} else  {
+				//non_yt.push(link.style['backgroundImage']);
 				return link.style['backgroundImage'];
 			}
         });
@@ -25,7 +27,8 @@ page.open(url, function(status) {
 		url = links[i];
 		urls.push(url);
 	}
-	console.log( urls);
+
+	console.log(urls);
     phantom.exit();
 });
 
