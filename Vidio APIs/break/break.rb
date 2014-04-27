@@ -2,10 +2,6 @@ require 'httparty'
 require 'open-uri'
 require 'nokogiri'
 
-class Metacafe
-	include HTTParty
-	base_uri 'http://metacafe.com'
-end
 =begin
 #BREAK
 xml = Nokogiri::HTML( open( "http://rss.break.com" ) )
