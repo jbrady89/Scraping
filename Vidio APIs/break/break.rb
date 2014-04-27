@@ -26,14 +26,21 @@ end
 #p links.uniq
 links.each do |link|
 	video_tags = []
+	video_info = {}
 	link = 'http://metacafe.com' + link
 	html = Nokogiri::HTML( open( link ) )
-	#p html.css("hgroup#ItemTitle").text, html.css("h2#Views").text, html.css('h2#UploadInfo').text, html.css('div#Description').text, 
 	tags = html.css('dl#Tags > dd > a')
 	tags.each do |tag|
 		video_tags.push(tag.text)
 	end
-	p video_tags
+	
+	video_info['tags'] = video_tags
+	video_info['title'] = html.css("hgroup#ItemTitle").text
+	video_info['views'] = html.css("h2#Views").text
+	video_info['date'] = html.css('h2#UploadInfo').text
+	video_info['description'] = html.css('div#Description > p').text 
+
+	p video_info, ''
 end
 
 =begin
