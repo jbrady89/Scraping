@@ -18,12 +18,17 @@ end
 
 #METACAFE Top 5
 links = []
-html = Nokogiri::HTML( open( "http://www.metacafe.com/popular-now/" ) )
-html.xpath("//section[@class='Spotlight Mode5v']//li").each do |a|
-	link_text = a.css('a').attr('href').text
-	links.push(link_text)
+channels = ["popular-now/", "movie_trailers/", "video-games/", "web-originals/", "tech/", "viral/", "music/", "tv_clips/" ]
+
+channels.each do |channel_uri| 
+	html = Nokogiri::HTML( open( "http://www.metacafe.com/" + channel_uri ) )
+	html.xpath("//section[@class='Spotlight Mode5v']//li").each do |a|
+		link_text = a.css('a').attr('href').text
+		links.push(link_text)
+	end
 end
-#p links.uniq
+
+count = 0
 links.each do |link|
 	video_tags = []
 	video_info = {}
@@ -33,14 +38,17 @@ links.each do |link|
 	tags.each do |tag|
 		video_tags.push(tag.text)
 	end
-	
-	video_info['tags'] = video_tags
-	video_info['title'] = html.css("hgroup#ItemTitle").text
-	video_info['views'] = html.css("h2#Views").text
-	video_info['date'] = html.css('h2#UploadInfo').text
-	video_info['description'] = html.css('div#Description > p').text 
+	title = html.css("hgroup#ItemTitle > h1").text
+	subbed = title.gsub(/\n|\r|\t/, '')
+	p subbed
+	#video_info['tags'] = video_tags
+	#video_info['title'] = html.css("hgroup#ItemTitle").text
+	#video_info['views'] = html.css("h2#Views").text
+	#video_info['date'] = html.css('h2#UploadInfo').text
+	#video_info['description'] = html.css('div#Description > p').text
+	count += 1
+	#p video_info, count, ''
 
-	p video_info, ''
 end
 
 =begin
