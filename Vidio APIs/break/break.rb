@@ -38,17 +38,16 @@ links.each do |link|
 	tags.each do |tag|
 		video_tags.push(tag.text)
 	end
-	title = html.css("hgroup#ItemTitle > h1").text
-	subbed = title.gsub(/\n|\r|\t/, '')
-	p subbed
-	#video_info['tags'] = video_tags
-	#video_info['title'] = html.css("hgroup#ItemTitle").text
-	#video_info['views'] = html.css("h2#Views").text
-	#video_info['date'] = html.css('h2#UploadInfo').text
-	#video_info['description'] = html.css('div#Description > p').text
+	#title = html.css("hgroup#ItemTitle > h1").text
+	#subbed = title.gsub(/\n|\r|\t/, '')
+	#p subbed
+	video_info['tags'] = video_tags
+	video_info['title'] = html.css("hgroup#ItemTitle > h1").text.gsub(/\n|\r|\t/, '')
+	video_info['views'] = html.css("h2#Views").text.gsub(/\n|\r|\t/, '')
+	video_info['date'] = html.css('h2#UploadInfo').text.gsub(/\n|\r|\t/, '')
+	video_info['description'] = html.css('div#Description > p').text.gsub(/\n|\r|\t/, '')
 	count += 1
 	#p video_info, count, ''
-
 end
 
 =begin

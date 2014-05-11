@@ -11,6 +11,7 @@ end
 channels = [ "music", "fun", "shortfilms", "news", "sport", "videogames", "auto", "animals", "creation", "tech", "tv", "lifestyle", "people", "travel" ]
 timeframe = { "today" => 1.day.ago, "last_week" => 1.week.ago, "last_month" => 1.month.ago }
 vidio_ids = []
+count = 0
 timeframe.each do |time_key, time_period|
 	time = time_period.strftime("%m/%d/%Y")
 	p time_key
@@ -26,14 +27,20 @@ timeframe.each do |time_key, time_period|
 
 					if viewCount > 100000 && time_key == "last_month"
 						vidio_ids.push(vidio_id)
-						p a, "---"
+						count += 1
+						p count
+						#p a, "---"
 						#p a['ratings_total'], a['rating']
 						elsif viewCount > 10000 && time_key == "last_week"
 							vidio_ids.push(vidio_id)
-							p a, "---"
+							count += 1
+							p count
+							#p a, "---"
 						elsif viewCount > 1000 && time_key == "today"
 							vidio_ids.push(vidio_id)
-							p a, "---"
+							count += 1
+							p count
+							#p a, "---"
 					end
 				end
 			end
