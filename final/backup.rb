@@ -166,14 +166,15 @@ end_of_results = false
 for i in 0..9
 
 	if i == 0
-		channel_videos = Youtube.get('/playlists?key=AIzaSyBi5KmDUjrcysyFgQgTddYMx0bJgGPxjFQ&channelId=' + channel_id.to_s + '&part=snippet&maxResults=50')
+		channel_videos = Youtube.get('/search?key=AIzaSyBi5KmDUjrcysyFgQgTddYMx0bJgGPxjFQ&channelId=' + channel_id.to_s + '&part=snippet&maxResults=50')
+		p channel_videos
 		next_page = channel_videos.parsed_response["nextPageToken"]
 		p next_page
 		#channel_videos[0].each do |entry|
 			#p entry
 		#end
 	else
-			channel_videos = Youtube.get('/playlists?key=AIzaSyBi5KmDUjrcysyFgQgTddYMx0bJgGPxjFQ&channelId=' + channel_id.to_s + '&part=snippet&maxResults=50&pageToken=' + next_page)
+			channel_videos = Youtube.get('/search?key=AIzaSyBi5KmDUjrcysyFgQgTddYMx0bJgGPxjFQ&channelId=' + channel_id.to_s + '&part=snippet&maxResults=50&pageToken=' + next_page)
 			next_page = channel_videos.parsed_response["nextPageToken"]
 			if next_page == nil
 				end_of_results = true
