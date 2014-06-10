@@ -38,7 +38,7 @@ token = OAuth2::AccessToken.new(client, TOKEN)
 categories.each do |category_name, cat_uri|
 	too_old = false
 	p category_name
-	for i in 1..200
+	for i in 1..300
 		page_number = i.to_s
 		videos = token.get('/categories/' + cat_uri + '/videos?sort=date&page=' + page_number + '&per_page=100')
 		hash = JSON.parse(videos.body)
