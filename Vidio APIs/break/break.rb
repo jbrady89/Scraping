@@ -35,7 +35,7 @@ links.each do |link|
 	link = 'http://metacafe.com' + link
 	html = Nokogiri::HTML( open( link ) )
 	tags = html.css('dl#Tags > dd > a')
-	tags.each do |tag|
+	tags.each do |tag|cd
 		video_tags.push(tag.text)
 	end
 	#title = html.css("hgroup#ItemTitle > h1").text
