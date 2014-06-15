@@ -32,6 +32,6 @@ links.each do |link|
 	video_info['date'] = html.css('h2#UploadInfo').text.gsub(/\n|\r|\t/, '')
 	video_info['description'] = html.css('div#Description > p').text.gsub(/\n|\r|\t/, '')
 	count += 1
-	p link, video_info, count, ''
+	p link, video_info['title'], count, ''
 	video_tags = []
 end
