@@ -4,6 +4,7 @@ var system = require('system'),
 	urls = [],
 	non_yt = [],
 	url = "http://reddit.tv/" + uri;
+	
 page.open(url, function(status) {
 	//console.log(page.content);
 	console.log(document.getElementsByTagName('a').length);
