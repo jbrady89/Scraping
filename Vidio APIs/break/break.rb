@@ -29,13 +29,13 @@ channels.each do |channel_uri|
 end
 
 count = 0
+video_tags = []
 links.each do |link|
-	video_tags = []
 	video_info = {}
 	link = 'http://metacafe.com' + link
 	html = Nokogiri::HTML( open( link ) )
 	tags = html.css('dl#Tags > dd > a')
-	tags.each do |tag|cd
+	tags.each do |tag|
 		video_tags.push(tag.text)
 	end
 	#title = html.css("hgroup#ItemTitle > h1").text
@@ -47,9 +47,9 @@ links.each do |link|
 	video_info['date'] = html.css('h2#UploadInfo').text.gsub(/\n|\r|\t/, '')
 	video_info['description'] = html.css('div#Description > p').text.gsub(/\n|\r|\t/, '')
 	count += 1
-	#p video_info, count, ''
+	p link, video_info, video_tags, ''
+	video_tags = []
 end
-
 =begin
 #embed link
 <iframe src="http://www.metacafe.com/embed/10859663/" width="440" height="248" allowFullScreen frameborder=0></iframe>	
