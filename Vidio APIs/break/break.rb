@@ -20,7 +20,7 @@ channels = ["movies-and-tv", "break-sports", "all-the-animals", "bizarre-and-ama
 
 #example url = 'www.break.com/' + channel + '/1,2' etc..
 #channels.each do |channel|
-	for i in 2..3
+	for i in 1..3
 		url = "http://www.break.com/movies-and-tv/" + i.to_s
 		html = Nokogiri::HTML( open(url) )
 		#p html
