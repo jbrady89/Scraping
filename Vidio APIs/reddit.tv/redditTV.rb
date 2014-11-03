@@ -31,8 +31,10 @@ class Reddit
 
 	def self.get_reddit_links
 		video_id = []
+		# get videos for all channels
 		Reddit_channels.each do |channel_link|
 			channel_uri = "#/r/" + channel_link
+			#channel_uri contains a string for use in rtv.js starting on line 2
 			output = `phantomjs rtv.js #{channel_uri} &`
 			#p output
 			#video_id.push(output)
