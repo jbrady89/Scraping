@@ -132,13 +132,14 @@ category_id.each do |key, value|
 			for i in 0..9
 				if i == 0 
 
-				    category = Youtube.get('/search?part=snippet&order=viewCount&type=video&regionCode=US&videoCategoryId=' + categoryId + '&publishedAfter=' + time.to_s + '&maxResults=50&key=AIzaSyBi5KmDUjrcysyFgQgTddYMx0bJgGPxjFQ')
+				    category = Youtube.get('/search?part=snippet&order=viewCount&type=video&regionCode=US&videoCategoryId=' + categoryId + '&publishedAfter=' + time.to_s + '&maxResults=50')
+					p category
 					nextPage = category.parsed_response["nextPageToken"]
 					vars = check_views time_period, category, count, time_key, low_views, vidio_ids, vidio_info, categoryName
 					p i, "total: " + vars[:vidCount].to_s, "this period: " + (i + 50).to_s					
 				else
 					count = vars["vidCount"]
-					category = Youtube.get('/search?part=snippet&order=viewCount&type=video&regionCode=US&videoCategoryId=' + categoryId + '&publishedAfter=' + time.to_s + '&maxResults=50&pageToken=' + nextPage + '&key=AIzaSyBi5KmDUjrcysyFgQgTddYMx0bJgGPxjFQ')
+					category = Youtube.get('/search?part=snippet&order=viewCount&type=video&regionCode=US&videoCategoryId=' + categoryId + '&publishedAfter=' + time.to_s + '&maxResults=50&pageToken=' + nextPage)
 					nextPage = category.parsed_response["nextPageToken"]
 					vars = check_views time_period, category, count, time_key, low_views, vidio_ids, vidio_info, categoryName
 					p i, "total: " + vars[:vidCount].to_s, "this period: " + (i * 50).to_s						
@@ -156,5 +157,5 @@ category_id.each do |key, value|
 		#p i, "total: " + vars[:vidCount].to_s, "this period: " + (i * 50).to_s
 	end	
 end
-p vidio_ids.uniq.length
+p 'Total Unique Videos: ' + vidio_ids.uniq.length.to_s
 #p vidio_info.uniq
