@@ -31,6 +31,33 @@ page.open(url, function(status) {
 				//non_yt.push(link.style['backgroundImage']);
 				return link.style['backgroundImage'];
 			}
+
+			// alternate approach but needs more work
+						/*if ( link.style['backgroundImage'].match(/edge/g) ) {
+
+				//return link.style['backgroundImage'].substring(61,73);
+					return "liveleak";
+			}	else if ( link.style['backgroundImage'].match(/vimeo/g) ) {
+				// vimeo
+				//return link.style['backgroundImage'].substring(32, 41);
+					return "vimeo";
+			}	else if ( link.style['backgroundImage'].match(/ytimg/g) ) {
+				// this grabs the video ID
+				// we use this for getting more data via the youtube API in redditTV.rb
+				//return link.style['backgroundImage'].substring(27, 38);
+					return "youtube";
+			} 	else if ( link.style['backgroundImage'].match(/dmcdn/g) ) {
+				//non_yt.push(link.style['backgroundImage']);
+				//return link.style['backgroundImage'];
+					return "daily motion";
+			} 	else if ( link.style['backgroundImage'].match(/espncdn/g) ) {
+					return "espn";
+			} 	else if ( link.style['backgroundImage'].match(/images.ted/g) ) { // everything else
+					//return link.style['backgroundImage'];
+					return "TED"
+			}	else {
+				return link.style['backgroundImage'];
+			}*/
         });
     });
     console.log(links);
