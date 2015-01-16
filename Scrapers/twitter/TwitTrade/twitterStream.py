@@ -59,7 +59,7 @@ last_price = None
 
 #can get minute data for up to the last 15 days
 def get_historic_data():
-	response = requests.get("http://chartapi.finance.yahoo.com/instrument/1.1/AAPL/chartdata;type=quote;range=1d;/json/")
+	response = requests.get("http://chartapi.finance.yahoo.com/instrument/1.1/AAPL/chartdata;type=quote;range=15d;/json/")
 	jsonp = response.text
 	fixed_json = jsonp[ jsonp.index("(") + 1 : jsonp.rindex(")") ]
 	price_data = json.loads(fixed_json)
