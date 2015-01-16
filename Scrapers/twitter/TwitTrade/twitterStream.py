@@ -57,6 +57,16 @@ count = 0
 next_call = time.time()
 last_price = None
 
+#can get minute data for up to the last 15 days
+def get_historic_data():
+	response = requests.get("http://chartapi.finance.yahoo.com/instrument/1.1/AAPL/chartdata;type=quote;range=1d;/json/")
+	jsonp = response.text
+	fixed_json = jsonp[ jsonp.index("(") + 1 : jsonp.rindex(")") ]
+	price_data = json.loads(fixed_json)
+	print(price_data['series'])
+
+#get_historic_data()
+
 def get_stock_data():
 	global last_price
 	response = requests.get("http://finance.yahoo.com/webservice/v1/symbols/AAPL/quote?format=json")
