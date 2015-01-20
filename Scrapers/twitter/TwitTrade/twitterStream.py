@@ -148,12 +148,12 @@ def sentAnalysis(created_at, user, user_id, favorited, favorite_count, retweeted
 	#user_data = User( username=user, followers=followers, following=following)
 	#tweet_data = Tweet( user_id=user_id, text=text, retweet=retweeted, retweet_count=retweet_count )
 
+	#http://stackoverflow.com/questions/5729500/how-does-sqlalchemy-handle-unique-constraint-in-table-definition
 	try:
-		# if true, user already exists
+		# if true, user  or timestamp already exists
   		name_existing = session.query(User).filter_by(username=user).one()
   		#timestamp_existing = session.query(Tweets).filter_by(timestamp=timestamp).one()
   		print(name_existing)
-  	# do something with existing
 	except:
   		user_data = User( username=user, followers=followers, following=following)
   		tweet_data = Tweet( user_id=user_id, text=text, retweet=retweeted, retweet_count=retweet_count )
@@ -162,11 +162,7 @@ def sentAnalysis(created_at, user, user_id, favorited, favorite_count, retweeted
   		print("username ({}) doesn't exist".format(user))
   		return
   		#print("name exists: {}, time exists: {} \n \n".format(name_existing, timestamp_existing))
-  		#print(Exception)
-
-  		#session.add_all([tweet_data, user_data])
-
-	#session.add(tweet_data)
+  		
 	# insert the new data in db
 	print("username ({}) already exists".format(user))
 	tweet_data = Tweet( user_id=user_id, text=text, retweet=retweeted, retweet_count=retweet_count )
