@@ -1,6 +1,6 @@
 import datetime, threading, time, json, requests, psycopg2, sys
 from tweepy import Stream, OAuthHandler, StreamListener
-from sqlalchemy import create_engine, Column, Integer, String
+from sqlalchemy import create_engine, Column, Integer, String, Float, Text, Boolean
 from sqlalchemy import DateTime, Time
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
@@ -28,16 +28,41 @@ session = Session()
 class Price(Base):
 	__tablename__ = 'prices'
 
-	id = Column(Integer, primary_key=True)
-	symbol = Column(String)
-	price = Column(Integer)
-	date = Column(DateTime, default=datetime.datetime.now())
+	id = Column(Integer, primary_key=True, index=True)
+	#symbol = Column(String)
+	close = Column(Float)
+	timestamp = Column(DateTime, default=datetime.datetime.now(), index=True, unique=True)
 
 	def __repr__(self):
-		return "<User(symbol='%s', price='%s', time='%s')>" % (self.symbol, self.price, self.date)
+		return "<User(close='%s', timestamp='%s')>" % (self.close, self.timestamp)
 
 class Tweet(Base):
 	__tablename__ = 'tweets'
+
+	id = Column(Integer, primary_key=True, index=True)
+	user_id = Column(Integer, index=True)
+	text = Column(Text)
+	retweet = Column(Boolean)
+	retweet_count = Column(Integer)
+	timestamp = Column(DateTime, default=datetime.datetime.now(), index=True)
+
+	def __repr__(self):
+		return "<User(symbol='%s', price='%s', time='%s')>" % (self.user_id, self.text, self.retweet, self.retweet_count, self.timestamp)
+
+class User(Base):
+	__tablename__ = 'users'
+
+	id = Column(Integer, primary_key=True, index=True)
+	username = Column(Text, unique=True)
+	followers = Column(Integer)
+	following = Column(Integer)
+
+	def __repr__(self):
+		return "<User(username='%s', followers='%s', following='%s')>" % (self.username, self.followers, self.following)
+
+'''
+class Stocks(Base):
+	__tablename__ = 'stocks'
 
 	id = Column(Integer, primary_key=True)
 	user = Column(String)
@@ -48,6 +73,8 @@ class Tweet(Base):
 
 	def __repr__(self):
 		return "<User(symbol='%s', price='%s', time='%s')>" % (self.user, self.followers, self.text, self.time)
+'''
+
 
 
 
@@ -82,24 +109,25 @@ def get_stock_data():
 	p = Decimal(price)
 	# only display two places
 	p = round(p, 2)
-	print(p, price)
-	print()
-	new_price = Price( symbol=symbol, price=p )
+	#print(p, price)
+	#print()
+	#print("price:{}, price-float:{}, timestamp:{}".format(price, float(price), time))
+	#new_price = Price( close=price, timestamp=time )
 
 	# insert the new data in db
-	session.add(new_price)
-	session.commit()
-	print("record saved!")
+	#session.add(new_price)
+	#session.commit()
+	#print("record saved!")
 	#data = {"time": time, "symbol": symbol, "price": price, "date": datetime.datetime.utcnow() }
 	#prices.insert(data)
 	if (last_price):
 	  difference = int(float(price)) - int(float(last_price))
 	  #print(" change: {}".format(difference))
-	  print(" time: {}, symbol: {}, price: {}, change: {}, \n".format(time, symbol, price, difference))
+	  #print(" time: {}, symbol: {}, price: {}, change: {}, \n".format(time, symbol, price, difference))
 	  return
 
-	print()
-	print(" time: {}, symbol: {}, price: {}, \n".format(time, symbol, price))
+	#print()
+	#print(" time: {}, symbol: {}, price: {}, \n".format(time, symbol, price))
 	last_price = price
 
 def get_price():
@@ -108,20 +136,45 @@ def get_price():
   get_stock_data() #get the current price
   next_call = next_call+60 #schedule the next call for 1 minute in the future
   #this sets up the 1 minute interval running in the background
-  threading.Timer( next_call - time.time(), get_price ).start()
+  price_timer = threading.Timer( next_call - time.time() , get_price )
+  price_timer.start()
 
-def sentAnalysis(user, followers, following, text):
+def sentAnalysis(created_at, user, user_id, favorited, favorite_count, retweeted, retweet_count, followers, following, text):
 	global count
 	count += 1
-	new_tweet = Tweet( user=user, followers=followers, following=following, text=text )
 
+	#timestamp = datetime.datetime.now()
+
+	#user_data = User( username=user, followers=followers, following=following)
+	#tweet_data = Tweet( user_id=user_id, text=text, retweet=retweeted, retweet_count=retweet_count )
+
+	try:
+		# if true, user already exists
+  		name_existing = session.query(User).filter_by(username=user).one()
+  		#timestamp_existing = session.query(Tweets).filter_by(timestamp=timestamp).one()
+  		print(name_existing)
+  	# do something with existing
+	except:
+  		user_data = User( username=user, followers=followers, following=following)
+  		tweet_data = Tweet( user_id=user_id, text=text, retweet=retweeted, retweet_count=retweet_count )
+  		session.add_all([tweet_data,user_data])
+  		session.commit()
+  		print("username ({}) doesn't exist".format(user))
+  		return
+  		#print("name exists: {}, time exists: {} \n \n".format(name_existing, timestamp_existing))
+  		#print(Exception)
+
+  		#session.add_all([tweet_data, user_data])
+
+	#session.add(tweet_data)
 	# insert the new data in db
-	session.add(new_tweet)
+	print("username ({}) already exists".format(user))
+	tweet_data = Tweet( user_id=user_id, text=text, retweet=retweeted, retweet_count=retweet_count )
+	session.add(tweet_data)
 	session.commit()
-	print("record saved!")
 
-	print("user: {}, followers: {}, following: {}, text: {}, \n".format(user, followers, following, text))
-	print("active threads: {}".format(threading.active_count))
+	#print("created_at: {} \n user: {} \n followers: {} \n following: {} \n text: {} \n".format(datetime.datetime.now(), user, followers, following, text))
+	#print("active threads: {}".format(threading.active_count))
 
 class listener(StreamListener):
 
@@ -133,9 +186,16 @@ class listener(StreamListener):
         user = tweet['user']['screen_name']
         followers = tweet['user']['followers_count']
         following = tweet['user']['friends_count']
+        retweeted = tweet['retweeted']
+        retweet_count = tweet['retweet_count']
+        favorited = tweet['favorited']
+        favorite_count = tweet['favorite_count']
+        created_at = tweet['created_at']
+        user_id = tweet['user']['id']
         text = tweet['text']
 
-        sentAnalysis(user, followers, following, text)
+
+        sentAnalysis(created_at, user, user_id, favorited, favorite_count, retweeted, retweet_count, followers, following, text)
 
     def on_error(self, status):
         print( status.text )
@@ -145,4 +205,4 @@ auth = OAuthHandler(consumer_key, consumer_secret)
 auth.set_access_token(access_token, access_token_secret)
 get_price()
 twitterStream = Stream(auth, listener())
-twitterStream.filter(track=["$AAPL"])
+twitterStream.filter(track=["$AAPL"], languages=["en"])
