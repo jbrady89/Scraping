@@ -149,10 +149,12 @@ def get_price():
 
 positive_count = 0
 negative_count = 0
+neutral_count = 0
 def sentAnalysis(created_at, user, user_id, favorited, favorite_count, retweeted, retweet_count, followers, following, text):
 	global count
 	global positive_count
 	global negative_count
+	global neutral_count
 	count += 1
 
 	#timestamp = datetime.datetime.now()
@@ -164,18 +166,30 @@ def sentAnalysis(created_at, user, user_id, favorited, favorite_count, retweeted
 		sentiment = processed_text.sentiment
 		polarity = sentiment.polarity
 		print(polarity )
+
 		if polarity < 0:
-			print("negative")
+
 			negative_count += 1
+			#print("negative_count: {} \n".format(negative_count))
+
 		elif polarity > 0:
+
 			positive_count += 1
-			print("positive")
-		elif polarity > 0.0:
-			print("neutral")
+			#print("positive_count: {} \n".format(positive_count))
+
+		elif polarity == 0.0:
+
+			neutral_count += 1
+			#print("neutral: {} \n".format(neutral_count))
+
 		else:
-			print("polarity is undefined")
+			print("polarity is undefined \n")
 
-
+		total = positive_count + negative_count + neutral_count
+		print("Total processed: {} \n".format(total))
+		print("Positive: {}".format(positive_count))
+		print("Negative: {}".format(negative_count))
+		print("Neutral: {}".format(neutral_count))
 	else: 
 		print("the tweet is not in english")
 		return
@@ -194,7 +208,7 @@ def sentAnalysis(created_at, user, user_id, favorited, favorite_count, retweeted
   		tweet_data = Tweet( user_id=user_id, text=text, retweet=retweeted, retweet_count=retweet_count )
   		session.add_all([tweet_data,user_data])
   		session.commit()
-  		print("username ({}) doesn't exist".format(user))
+  		#print("username ({}) doesn't exist".format(user))
   		return
   		#print("name exists: {}, time exists: {} \n \n".format(name_existing, timestamp_existing))
   		
