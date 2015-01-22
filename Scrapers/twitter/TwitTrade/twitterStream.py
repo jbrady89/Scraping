@@ -1,10 +1,12 @@
-import datetime, threading, time, json, requests, psycopg2, sys
+import datetime, threading, time, json, requests
 from tweepy import Stream, OAuthHandler, StreamListener
-from sqlalchemy import create_engine, Column, Integer, String, Float, Text, Boolean
-from sqlalchemy import DateTime, Time
+from sqlalchemy import create_engine, Column, Integer, Float, Text, Boolean
+from sqlalchemy import DateTime
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
-from decimal import *
+import textblob
+from textblob import TextBlob
+import langid
 
 #Define our connection string
 #conn_string = 'database="twitter", port="5433", user="twitter", password="password"'
@@ -104,31 +106,36 @@ def get_stock_data():
 	json_data = response.json()
 
 	time = json_data['list']['resources'][0]['resource']['fields']['utctime']
-	symbol = json_data['list']['resources'][0]['resource']['fields']['symbol']
-	price = json_data['list']['resources'][0]['resource']['fields']['price']
-	p = Decimal(price)
-	# only display two places
-	p = round(p, 2)
+	#symbol = json_data['list']['resources'][0]['resource']['fields']['symbol']
+	close = json_data['list']['resources'][0]['resource']['fields']['price']
+	
 	#print(p, price)
 	#print()
-	#print("price:{}, price-float:{}, timestamp:{}".format(price, float(price), time))
-	#new_price = Price( close=price, timestamp=time )
 
-	# insert the new data in db
-	#session.add(new_price)
-	#session.commit()
+	print("price:{}, timestamp:{}".format(float(close), time))
+
+	#try:
+	#	timestamp = datetime.datetime.now()
+	#	existing_price = session.query(Price).filter_by(timestamp=timestamp).one()
+	#except:
+	#	print("a record exists with the time value: {} \n".format(existing_price))
+	#	#insert data
+	#	new_price = Price( close=price )
+	#	session.add(new_price)
+	#	session.commit()
+
 	#print("record saved!")
 	#data = {"time": time, "symbol": symbol, "price": price, "date": datetime.datetime.utcnow() }
 	#prices.insert(data)
 	if (last_price):
-	  difference = int(float(price)) - int(float(last_price))
+	  difference = int(float(close)) - int(float(last_price))
 	  #print(" change: {}".format(difference))
 	  #print(" time: {}, symbol: {}, price: {}, change: {}, \n".format(time, symbol, price, difference))
 	  return
 
 	#print()
 	#print(" time: {}, symbol: {}, price: {}, \n".format(time, symbol, price))
-	last_price = price
+	last_price = close
 
 def get_price():
   global next_call #the current time
@@ -139,11 +146,39 @@ def get_price():
   price_timer = threading.Timer( next_call - time.time() , get_price )
   price_timer.start()
 
+
+positive_count = 0
+negative_count = 0
 def sentAnalysis(created_at, user, user_id, favorited, favorite_count, retweeted, retweet_count, followers, following, text):
 	global count
+	global positive_count
+	global negative_count
 	count += 1
 
 	#timestamp = datetime.datetime.now()
+	classify = langid.classify(text);
+	lang = classify[0]
+
+	if lang == "en":
+		processed_text = TextBlob(text)
+		sentiment = processed_text.sentiment
+		polarity = sentiment.polarity
+		print(polarity )
+		if polarity < 0:
+			print("negative")
+			negative_count += 1
+		elif polarity > 0:
+			positive_count += 1
+			print("positive")
+		elif polarity > 0.0:
+			print("neutral")
+		else:
+			print("polarity is undefined")
+
+
+	else: 
+		print("the tweet is not in english")
+		return
 
 	#user_data = User( username=user, followers=followers, following=following)
 	#tweet_data = Tweet( user_id=user_id, text=text, retweet=retweeted, retweet_count=retweet_count )
@@ -201,4 +236,19 @@ auth = OAuthHandler(consumer_key, consumer_secret)
 auth.set_access_token(access_token, access_token_secret)
 get_price()
 twitterStream = Stream(auth, listener())
-twitterStream.filter(track=["$AAPL"], languages=["en"])
+twitterStream.filter(track=[
+							"aapl", 
+							"apple", 
+							"iphone", 
+							"os x",
+							"ios", 
+							"tim cook", 
+							"mac", 
+							"ipad", 
+							"iwatch", 
+							"macbook",
+							"steve jobs",
+							"ipod"
+
+						], languages=["en"]
+					)
