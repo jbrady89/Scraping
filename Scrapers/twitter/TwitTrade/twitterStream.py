@@ -1,12 +1,10 @@
-import datetime, threading, time, json, requests
+import datetime, threading, time, json, requests, langid, sys
 from tweepy import Stream, OAuthHandler, StreamListener
 from sqlalchemy import create_engine, Column, Integer, Float, Text, Boolean
 from sqlalchemy import DateTime
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
-import textblob
 from textblob import TextBlob
-import langid
 
 #Define our connection string
 #conn_string = 'database="twitter", port="5433", user="twitter", password="password"'
@@ -47,6 +45,8 @@ class Tweet(Base):
 	retweet = Column(Boolean)
 	retweet_count = Column(Integer)
 	timestamp = Column(DateTime, default=datetime.datetime.now(), index=True)
+	sentiment = Column(Float)
+
 
 	def __repr__(self):
 		return "<User(symbol='%s', price='%s', time='%s')>" % (self.user_id, self.text, self.retweet, self.retweet_count, self.timestamp)
@@ -85,13 +85,13 @@ def get_historic_data(symbol):
 	for entry in price_data['series'][:-1]:
 		close = entry["close"]
 		timestamp = entry["Timestamp"]
-		minutes = (timestamp / 60)
-		minutes = round(minutes)
-		timestamp = minutes * 60
+		#minutes = (timestamp / 60)
+		#minutes = round(minutes)
+		#timestamp = minutes * 60
 		timestamp = datetime.datetime.fromtimestamp(timestamp).strftime('%Y-%m-%d %H:%M:%S')
-		#new_price = Price(close=close, timestamp=timestamp)
-		#session.add(new_price)
-		#session.commit()
+		new_price = Price(close=close, timestamp=timestamp)
+		session.add(new_price)
+		session.commit()
 		print("Close: {}, Timestamp: {} \n".format(close, timestamp))
 
 #get_historic_data("AAPL")
@@ -217,7 +217,7 @@ def sentAnalysis(created_at, user, user_id, favorited, favorite_count, retweeted
   		print(name_existing)
 	except:
   		user_data = User( username=user, followers=followers, following=following)
-  		tweet_data = Tweet( user_id=user_id, text=text, retweet=retweeted, retweet_count=retweet_count,timestamp=timestamp )
+  		tweet_data = Tweet( user_id=user_id, text=text, retweet=retweeted, retweet_count=retweet_count,timestamp=timestamp, sentiment=polarity )
   		session.add_all([tweet_data,user_data])
   		session.commit()
   		#print("username ({}) doesn't exist".format(user))
@@ -226,7 +226,7 @@ def sentAnalysis(created_at, user, user_id, favorited, favorite_count, retweeted
   		
 	# insert the new data in db
 	#print("username ({}) already exists".format(user))
-	tweet_data = Tweet( user_id=user_id, text=text, retweet=retweeted, retweet_count=retweet_count, timestamp=timestamp )
+	tweet_data = Tweet( user_id=user_id, text=text, retweet=retweeted, retweet_count=retweet_count, timestamp=timestamp, sentiment=polarity )
 	session.add(tweet_data)
 	session.commit()
 
@@ -262,9 +262,26 @@ auth = OAuthHandler(consumer_key, consumer_secret)
 auth.set_access_token(access_token, access_token_secret)
 #get_price()
 twitterStream = Stream(auth, listener())
-twitterStream.filter(track=[
+#twitterStream.filter(track=[
+#
+#							"apple", 
+#							"iphone", 
+#							"ios", 
+#							"tim cook", 
+#							"mac", 
+#							"ipad", 
+#							"iwatch", 
+#							"ipod"
+#
+#						], languages=["en"]
+#				)
+
+while True:  #Endless loop: personalize to suit your own purposes
+    try: 
+        twitterStream.filter(track=[
 
 							"apple", 
+							"aapl",
 							"iphone", 
 							"os x",
 							"ios", 
@@ -276,3 +293,8 @@ twitterStream.filter(track=[
 
 						], languages=["en"]
 				)
+
+    except:
+        #e = sys.exc_info()[0]  #Get exception info (optional)
+        #print ('ERROR:',e ) #Print exception info (optional)
+        continue
