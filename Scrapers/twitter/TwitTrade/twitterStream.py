@@ -6,25 +6,18 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 from textblob import TextBlob
 
-#Define our connection string
-#conn_string = 'database="twitter", port="5433", user="twitter", password="password"'
 
-# print the connection string we will use to connect
 print ( "Connecting to database\n")
 
-# get a connection, if a connect cannot be made an exception will be raised here
-#conn = psycopg2.connect(conn_string)
 engine = create_engine("postgresql+psycopg2://twitter:password@localhost:5433/twitter")
 
-
-# conn.cursor will return a cursor object, you can use this cursor to perform queries
-#cursor = conn.cursor()
 print ( "Connected!\n" )
 
 Base = declarative_base()
 Session = sessionmaker(bind=engine)
 session = Session()
 
+#classes for each db table
 class Price(Base):
 	__tablename__ = 'prices'
 
@@ -62,9 +55,6 @@ class User(Base):
 	def __repr__(self):
 		return "<User(username='%s', followers='%s', following='%s')>" % (self.username, self.followers, self.following)
 
-
-
-
 consumer_key = "rY3Q4lLIAcLRXPm66JoU2jL8X"
 consumer_secret = "xkTrpkamaiDQaiAdEvcvJLj6hmaLH0DL2m5bE4l4H7ROFuRKBC"
 access_token = "928665026-VghhFE4Xxovwv1Sz7Ivizdm6bGjEQn2yFGgd5TIy"
@@ -80,11 +70,12 @@ def get_historic_data(symbol):
 	jsonp = response.text
 	fixed_json = jsonp[ jsonp.index("(") + 1 : jsonp.rindex(")") ]
 	price_data = json.loads(fixed_json)
-	#series is the location of the minutely price data
-	#print(price_data['series'])
+	#loop through the minute data
+	#it is 5 minute data when range is > 1d
 	for entry in price_data['series'][:-1]:
 		close = entry["close"]
 		timestamp = entry["Timestamp"]
+		#format the timestamp
 		#minutes = (timestamp / 60)
 		#minutes = round(minutes)
 		#timestamp = minutes * 60
@@ -96,47 +87,25 @@ def get_historic_data(symbol):
 
 #get_historic_data("AAPL")
 
-
-#get_historic_data("AAPL")
-
 def get_stock_data():
 	global last_price
 	response = requests.get("http://finance.yahoo.com/webservice/v1/symbols/AAPL/quote?format=json")
 	json_data = response.json()
 
-	time = json_data['list']['resources'][0]['resource']['fields']['utctime']
-	#symbol = json_data['list']['resources'][0]['resource']['fields']['symbol']
-	#timestamp = datetime.datetime.now()
-	#print("timestamp: {}".format(timestamp))
+	utctime = json_data['list']['resources'][0]['resource']['fields']['utctime']
 	close = json_data['list']['resources'][0]['resource']['fields']['price']
-	
-	#print(p, price)
-	#print()
-
-	print("price:{}, timestamp:{}".format(close, time))
+	timestamp = time.time()
+	timestamp = datetime.datetime.fromtimestamp(timestamp).strftime('%Y-%m-%d %H:%M:%S')
 
 	try:
-		existing_time = session.query(Price).filter_by(timestamp=time).one()
+		existing_time = session.query(Price).filter_by(timestamp=timestamp).one()
 		print("a record exists with the time value: {} \n".format(existing_time))
 
 	except:
 		#insert data
-		new_price = Price( close=close, timestamp=time )
+		new_price = Price(close=close, timestamp=timestamp)
 		session.add(new_price)
 		session.commit()
-
-	#print("record saved!")
-	#data = {"time": time, "symbol": symbol, "price": price, "date": datetime.datetime.utcnow() }
-	#prices.insert(data)
-	if (last_price):
-	  #difference = int(float(close)) - int(float(last_price))
-	  #print(" change: {}".format(difference))
-	  #print(" time: {}, symbol: {}, price: {}, change: {}, \n".format(time, symbol, price, difference))
-	  return
-
-	#print()
-	#print(" time: {}, symbol: {}, price: {}, \n".format(time, symbol, price))
-	last_price = close
 
 def get_price():
   global next_call #the current time
@@ -154,7 +123,7 @@ neutral_count  = 0
 polarity_total = 0
 polarity_average = 0
 total = 0
-def sentAnalysis(created_at, user, user_id, favorited, favorite_count, retweeted, retweet_count, followers, following, text):
+def get_sentiment(created_at, user, user_id, favorited, favorite_count, retweeted, retweet_count, followers, following, text):
 	global count
 	global positive_count
 	global negative_count
@@ -204,9 +173,6 @@ def sentAnalysis(created_at, user, user_id, favorited, favorite_count, retweeted
 		#print("the tweet is not in english")
 		return
 
-	#user_data = User( username=user, followers=followers, following=following)
-	#tweet_data = Tweet( user_id=user_id, text=text, retweet=retweeted, retweet_count=retweet_count )
-
 	#http://stackoverflow.com/questions/5729500/how-does-sqlalchemy-handle-unique-constraint-in-table-definition
 	timestamp = time.time()
 	timestamp = datetime.datetime.fromtimestamp(timestamp).strftime('%Y-%m-%d %H:%M:%S')
@@ -225,34 +191,33 @@ def sentAnalysis(created_at, user, user_id, favorited, favorite_count, retweeted
   		#print("name exists: {}, time exists: {} \n \n".format(name_existing, timestamp_existing))
   		
 	# insert the new data in db
-	#print("username ({}) already exists".format(user))
 	tweet_data = Tweet( user_id=user_id, text=text, retweet=retweeted, retweet_count=retweet_count, timestamp=timestamp, sentiment=polarity )
 	session.add(tweet_data)
 	session.commit()
 
-	#print("created_at: {} \n user: {} \n followers: {} \n following: {} \n text: {} \n".format(datetime.datetime.now(), user, followers, following, text))
-	#print("active threads: {}".format(threading.active_count))
+def process_data(data):
+	tweet = json.loads(data)
+	#print( json.dumps( tweet, sort_keys=True, indent=4, separators=(',', ': ') ) )
+
+	user = tweet['user']['screen_name']
+	followers = tweet['user']['followers_count']
+	following = tweet['user']['friends_count']
+	retweeted = tweet['retweeted']
+	retweet_count = tweet['retweet_count']
+	favorited = tweet['favorited']
+	favorite_count = tweet['favorite_count']
+	created_at = tweet['created_at']
+	user_id = tweet['user']['id']
+	text = tweet['text']
+
+	get_sentiment(created_at, user, user_id, favorited, favorite_count, retweeted, retweet_count, followers, following, text)
+
 
 class listener(StreamListener):
 
     def on_data(self, data):
     	
-        tweet = json.loads(data)
-       	#print( json.dumps( tweet, sort_keys=True, indent=4, separators=(',', ': ') ) )
-
-        user = tweet['user']['screen_name']
-        followers = tweet['user']['followers_count']
-        following = tweet['user']['friends_count']
-        retweeted = tweet['retweeted']
-        retweet_count = tweet['retweet_count']
-        favorited = tweet['favorited']
-        favorite_count = tweet['favorite_count']
-        created_at = tweet['created_at']
-        user_id = tweet['user']['id']
-        text = tweet['text']
-
-
-        sentAnalysis(created_at, user, user_id, favorited, favorite_count, retweeted, retweet_count, followers, following, text)
+        process_data(data)
 
     def on_error(self, status):
         print( status.text )
@@ -262,19 +227,6 @@ auth = OAuthHandler(consumer_key, consumer_secret)
 auth.set_access_token(access_token, access_token_secret)
 #get_price()
 twitterStream = Stream(auth, listener())
-#twitterStream.filter(track=[
-#
-#							"apple", 
-#							"iphone", 
-#							"ios", 
-#							"tim cook", 
-#							"mac", 
-#							"ipad", 
-#							"iwatch", 
-#							"ipod"
-#
-#						], languages=["en"]
-#				)
 
 while True:  #Endless loop: personalize to suit your own purposes
     try: 
@@ -297,4 +249,6 @@ while True:  #Endless loop: personalize to suit your own purposes
     except:
         #e = sys.exc_info()[0]  #Get exception info (optional)
         #print ('ERROR:',e ) #Print exception info (optional)
+        time.sleep(5)
+        twitterStream = Stream(auth, listener())
         continue
