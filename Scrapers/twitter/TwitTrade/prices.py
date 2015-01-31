@@ -9,7 +9,7 @@ from textblob import TextBlob
 
 
 
-print ( "Connecting to database\n")
+print ( "Connecting to database\n" )
 
 engine = create_engine("postgresql+psycopg2://twitter:password@localhost:5433/twitter")
 
