@@ -1,0 +1,16 @@
+{
+  "name": "soundcloud",
+  "version": "0.0.0",
+  "description": "",
+  "main": "get-top-songs.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "BSD-2-Clause",
+  "dependencies": {
+    "underscore": "~1.8.3",
+    "phantomjs": "~1.9.x",
+    "casperjs":"~1.x.x"
+  }
+}
