@@ -62,9 +62,9 @@ count = 0
 # if it is a youtube link, more data is fetched using the youtube data API
 output.each do |id|
 
-	snippet    =	Youtube.get('/videos?part=snippet&id=' + id + '&key=AIzaSyBi5KmDUjrcysyFgQgTddYMx0bJgGPxjFQ')
-	details    =	Youtube.get('/videos?part=contentDetails&id=' + id + '&key=AIzaSyBi5KmDUjrcysyFgQgTddYMx0bJgGPxjFQ')
-	statistics =	Youtube.get('/videos?part=statistics&id=' + id + '&key=AIzaSyBi5KmDUjrcysyFgQgTddYMx0bJgGPxjFQ')
+	snippet    =	Youtube.get('/videos?part=snippet&id=' + id + '&key=#{key}')
+	details    =	Youtube.get('/videos?part=contentDetails&id=' + id + '&key=#{key}#{key}')
+	statistics =	Youtube.get('/videos?part=statistics&id=' + id + '&key=#{key}')
 	
 
 	[ snippet,  details, statistics ].each do |vid_info|
