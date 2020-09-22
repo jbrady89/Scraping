@@ -13,9 +13,9 @@ end
 
 
 CONSUMER_KEY = "bebedacec262f1c8490fe8efbee259a9547898eb"
-SECRET = "11ae1c7df03482894ac3d665140d270d75c2f766"
+SECRET = ""
 TOKEN = "4c9903b8ecf4589d5cd0cdfb01129b02"
-TOKEN_SECRET = "870fec4bc472c222ffddb8b8fe40ae85cc23fb59"
+TOKEN_SECRET = ""
 
 categories = 	{
 								'Activism & Non Profits' => 'activism',
