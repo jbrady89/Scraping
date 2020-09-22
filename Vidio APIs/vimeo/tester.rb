@@ -24,7 +24,7 @@ categories = 	{
 				}
 
 ClientId = "bebedacec262f1c8490fe8efbee259a9547898eb"
-ClientSecret = "11ae1c7df03482894ac3d665140d270d75c2f766"
+ClientSecret = ""
 Token = "edb561bc411ac2ac53b482cd29a9c9be"
 
 videos = Array.new
