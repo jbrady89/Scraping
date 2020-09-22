@@ -3,7 +3,7 @@ require 'active_support/all'
 require 'oauth2'
 
 CLIENT_ID = "bebedacec262f1c8490fe8efbee259a9547898eb"
-CLIENT_SECRET = "11ae1c7df03482894ac3d665140d270d75c2f766"
+CLIENT_SECRET = ""
 TOKEN = "edb561bc411ac2ac53b482cd29a9c9be"
 
 categories = 	{
